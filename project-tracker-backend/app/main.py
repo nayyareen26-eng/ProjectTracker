@@ -12,10 +12,13 @@ from app.api.v1.routes.auth_routes import router as auth_router
 from app.api.v1.routes.department_routes import router as department_router
 from app.api.v1.routes.role_routes import router as role_router
 from app.api.v1.routes.project_member_routes import router as project_member_router
+from app.api.v1.routes.team_routes import router as team_router
+from app.api.v1.routes.team_project_routes import router as team_project_router
+from app.api.v1.routes.company_routes import router as company_router
 
 app = FastAPI(title="Project Tracker API")
 
-# DEV ONLY – create tables
+#  create tables
 Base.metadata.create_all(bind=engine)
 
 #CORS fix for frontend error
@@ -40,3 +43,7 @@ app.include_router(auth_router)
 app.include_router(department_router)
 app.include_router(role_router)
 app.include_router(project_member_router)
+app.include_router(team_router)
+app.include_router(team_project_router)
+app.include_router(company_router)
+

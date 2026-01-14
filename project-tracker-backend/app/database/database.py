@@ -6,7 +6,7 @@ from app.config import DATABASE_URL
 
 engine = create_engine(
     DATABASE_URL,
-    echo=True   # SQL queries console me dikhengi
+    echo=True  
 )
 
 SessionLocal = sessionmaker(

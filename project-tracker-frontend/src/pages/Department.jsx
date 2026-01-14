@@ -5,7 +5,8 @@ import { Typography, Container } from "@mui/material";
 const Departments = () => {
     return (
         <Container>
-            <Typography variant="h4" sx={{ mt: 3, mb: 2}}>
+            <Typography color="#6482AD"
+             variant="h4" sx={{ mt: 3, mb: 2}}>
                 Departments
             </Typography>
 

@@ -32,4 +32,4 @@ def login(data: LoginRequest, db: Session = Depends(get_db)):
         "user_id": user.user_id,
         "user_name": user.user_name,
         "job_profile": user.job_profile
-    }
+        }

@@ -85,3 +85,8 @@ def delete_board(
         "board_id": id
     }
 
+#board list 
+@router.get("/list")
+def list_boards(db: Session = Depends(get_db)):
+    return db.query(Board).all()
+

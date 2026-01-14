@@ -16,29 +16,51 @@ const Login = () => {
   const [error, setError] = useState("");
 
   const handleLogin = async () => {
-    try {
-      const res = await axios.post(
-        "http://127.0.0.1:8000/api/v1/auth/login",
-        {
-          email: email,
-          password: password
-        }
-      );
+  try {
+    const res = await axios.post(
+      "http://127.0.0.1:8000/api/v1/auth/login",
+      {
+        email: email,
+        password: password
+      }
+    );
 
-      console.log(res.data); // backend response
+    console.log(res.data);
 
-      // save user info
-      localStorage.setItem("user", JSON.stringify(res.data));
-      
-      navigate("/departments");
-      
-      alert("Login Successful");
-      // later: navigate to dashboard
+    // ---------- SAVE CONTEXT CORRECT ----------
+    localStorage.setItem(
+  "user",
+  JSON.stringify({
+    user_id: res.data.user_id,
+    job_profile: res.data.job_profile,
+    user_name: res.data.user_name
+  })
+);
 
-    } catch (err) {
-      setError("Invalid email or password");
+
+    // ---------- ROLE BASED REDIRECT ----------
+    if (res.data.job_profile === "ADMIN") {
+      navigate("/admin-dashboard");
+
+    } else if (
+      res.data.job_profile === "PRODUCT MANAGER" ||
+      res.data.job_profile === "PROJECT MANAGER"
+    ){
+      navigate("/department");
     }
-  };
+    else {
+      navigate("/project/");
+    }
+      
+    
+
+    alert("Login Successful ✔");
+
+  } catch (err) {
+    setError("Invalid email or password");
+  }
+};
+
 
   return (
     <Box
