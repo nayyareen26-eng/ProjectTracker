@@ -21,7 +21,9 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     new_user = User(
         user_name=user.user_name,
         email_id=user.email_id,
-        job_profile=user.job_profile
+        job_profile=user.job_profile,
+        password=None,
+        is_active=False
     )
 
     db.add(new_user)

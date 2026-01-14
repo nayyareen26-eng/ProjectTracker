@@ -1,15 +1,40 @@
-import os
-from dotenv import load_dotenv
+from pydantic_settings import BaseSettings
+from pydantic import Field
 
-load_dotenv()
 
-DB_USER = os.getenv("DB_USER")
-DB_PASSWORD = os.getenv("DB_PASSWORD")
-DB_HOST = os.getenv("DB_HOST")
-DB_PORT = os.getenv("DB_PORT")
-DB_NAME = os.getenv("DB_NAME")
+class Settings(BaseSettings):
+    # ===== DATABASE =====
+    DB_USER: str
+    DB_PASSWORD: str
+    DB_HOST: str
+    DB_PORT: int
+    DB_NAME: str
 
-DATABASE_URL = (
-    f"mysql+pymysql://{DB_USER}:{DB_PASSWORD}"
-    f"@{DB_HOST}:{DB_PORT}/{DB_NAME}"
-)
+    # ===== JWT =====
+    SECRET_KEY: str = "MY_NEW_SECRET_KEY"
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    
+    #email/smtp
+    MAIL_USERNAME: str
+    MAIL_PASSWORD: str
+    MAIL_FROM: str
+    MAIL_PORT: int
+    MAIL_SERVER: str 
+    
+
+    @property
+    def DATABASE_URL(self) -> str:
+        return (
+            f"mysql+pymysql://{self.DB_USER}:{self.DB_PASSWORD}"
+            f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        )
+
+    model_config = {
+        "env_file": ".env",
+        "extra": "forbid",
+        "case_sensitive": True
+    }
+
+
+settings = Settings()

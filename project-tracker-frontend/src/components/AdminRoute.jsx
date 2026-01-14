@@ -5,7 +5,7 @@ const AdminRoute = ({ children }) => {
   const role = localStorage.getItem("job_profile");
 
   if (role !== "ADMIN") {
-    return <Navigate to="/department" />;
+    return <Navigate to="/department" replace />;
   }
 
   return children;

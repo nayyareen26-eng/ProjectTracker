@@ -7,6 +7,8 @@ import ProjectDetail from "./components/ProjectDetail";
 import AdminDashboard from "./pages/AdminDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
+import SetPassword from "./pages/SetPassword";
+
 
 function App() {
   return (
@@ -14,6 +16,8 @@ function App() {
       <Routes>
         {/* Login */}
         <Route path="/" element={<Login />} />
+        <Route path="/login" element={<Login />} />
+
 
         {/* Redirect OLD plural route */}
         <Route path="/departments" element={<Navigate to="/department" replace />}/>
@@ -33,16 +37,18 @@ function App() {
         
         {/*Admin  */}
         <Route
- path="/admin-dashboard"
- element={
-   <ProtectedRoute>
-     <AdminRoute>
+         path="/admin-dashboard"
+        element={
+        <ProtectedRoute>
+        <AdminRoute>
         <AdminDashboard/>
-     </AdminRoute>
-   </ProtectedRoute>
- }
-/>
+       </AdminRoute>
+      </ProtectedRoute>
+    }
+   />
 
+      <Route path="/set-password" element={<SetPassword />} />
+      
       </Routes>
     </BrowserRouter>
   );
