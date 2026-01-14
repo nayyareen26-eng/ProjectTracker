@@ -15,6 +15,7 @@ import {
 const AdminDashboard = () => {
 
   const [roles, setRoles] = useState([]);
+  const [companies, setCompanies] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [teams, setTeams] = useState([]);
   const [notify, setNotify] = useState(false);
@@ -24,6 +25,7 @@ const AdminDashboard = () => {
     email: "",
     password: "",
     role_id: "",
+    company_id: "",
     department_id: "",
     team_id: ""
   });
@@ -35,19 +37,42 @@ const AdminDashboard = () => {
     setRoles(res.data);
   };
 
-  const loadDepartments = async () => {
-    const res = await api.get("/api/v1/department/");
+  const loadCompanies = async () => {
+    const res = await api.get("/api/v1/company/");
+    setCompanies(res.data);
+  };
+
+  const loadDepartments = async (companyId) => {
+    if (!companyId) return;
+    const res = await api.get(`/api/v1/company/${companyId}/department`);
     setDepartments(res.data);
   };
 
   const loadTeams = async (departmentId) => {
-    const res = await api.get(`/api/v1/department/${departmentId}/team`);
+
+  if (!departmentId) {
+    console.warn("🚫 loadTeams blocked, invalid id:", departmentId);
+    return;
+  }
+
+  console.log("🚀 loadTeams called with:", departmentId);
+
+  try {
+    const res = await api.get(
+      `/api/v1/department/${departmentId}/team`
+    );
+
     setTeams(res.data);
-  };
+  } catch (err) {
+    console.error("❌ Load teams error:", err);
+  }
+};
+
+
 
   useEffect(() => {
     loadRoles();
-    loadDepartments();
+    loadCompanies();
   }, []);
 
   /* ================= HANDLE CHANGE ================= */
@@ -55,14 +80,44 @@ const AdminDashboard = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    setForm((prev) => ({
+    setForm(prev => ({
       ...prev,
       [name]: value
     }));
 
+    // COMPANY CHANGE
+    if (name === "company_id") {
+      setDepartments([]);
+      setTeams([]);
+
+      setForm(prev => ({
+        ...prev,
+        department_id: "",
+        team_id: ""
+      }));
+
+      if (value) {
+        loadDepartments(Number(value));
+      }
+    }
+
+    // DEPARTMENT CHANGE
     if (name === "department_id") {
-      loadTeams(value);
-      setForm((prev) => ({ ...prev, team_id: "" }));
+
+      if (!value) {
+        console.warn("Invalid department id: ", value);
+        setTeams([]);
+        return;
+      }
+      
+
+      setForm(prev => ({
+        ...prev,
+        department_id: value,
+        team_id: ""
+      }));
+    
+      loadTeams(Number(value));
     }
   };
 
@@ -70,7 +125,10 @@ const AdminDashboard = () => {
 
   const createUser = async () => {
     try {
-      const selectedRole = roles.find(r => r.id === form.role_id);
+      const selectedRole = roles.find(
+        r => String(r.id) === String(form.role_id)
+      );
+
       if (!selectedRole) {
         alert("Select role");
         return;
@@ -81,22 +139,28 @@ const AdminDashboard = () => {
         email_id: form.email,
         password: form.password,
         job_profile: selectedRole.role_type,
-        department_id: form.department_id,
-        team_id: form.team_id
+        department_id: Number(form.department_id),
+        team_id: Number(form.team_id)
       });
 
       setNotify(true);
+
       setForm({
         full_name: "",
         email: "",
         password: "",
         role_id: "",
+        company_id: "",
         department_id: "",
         team_id: ""
       });
 
+      setDepartments([]);
+      setTeams([]);
+
     } catch (err) {
-      console.error("Create user error", err);
+      console.error("Create user error", err.response?.data);
+      alert("User creation failed");
     }
   };
 
@@ -139,7 +203,7 @@ const AdminDashboard = () => {
             onChange={handleChange}
           />
 
-          {/* Role */}
+          {/* ROLE */}
           <Select
             fullWidth
             sx={{ mb: 2 }}
@@ -148,48 +212,78 @@ const AdminDashboard = () => {
             onChange={handleChange}
             displayEmpty
           >
-            <MenuItem value="">Select Role</MenuItem>
-            {roles.map((r) => (
-              <MenuItem key={r.id} value={r.id}>
+            <MenuItem value="" disabled>Select Role</MenuItem>
+            {roles.map(r => (
+              <MenuItem key={r.id} value={String(r.id)}>
                 {r.role_type}
               </MenuItem>
             ))}
           </Select>
 
-          {/* Department */}
+          {/* COMPANY */}
           <Select
             fullWidth
             sx={{ mb: 2 }}
-            name="department_id"
-            value={form.department_id}
+            name="company_id"
+            value={form.company_id}
             onChange={handleChange}
             displayEmpty
           >
-            <MenuItem value="">Select Department</MenuItem>
-            {departments.map((d) => (
-              <MenuItem key={d.id} value={d.id}>
-                {d.department_name}
+            <MenuItem value="" disabled>Select Company</MenuItem>
+            {companies.map(c => (
+              <MenuItem key={c.id} value={String(c.id)}>
+                {c.company_name}
               </MenuItem>
             ))}
           </Select>
 
-          {/* Team */}
+          {/* DEPARTMENT */}
           <Select
             fullWidth
             sx={{ mb: 2 }}
-            name="team_id"
-            value={form.team_id}
+            name="department_id"
+            value={form.department_id || ""}
             onChange={handleChange}
             displayEmpty
-            disabled={!form.department_id}
+            disabled={!form.company_id}
           >
-            <MenuItem value="">Select Team</MenuItem>
-            {teams.map((t) => (
-              <MenuItem key={t.id} value={t.id}>
-                {t.team_name}
+            <MenuItem 
+            value="">
+              Select Department
+            </MenuItem>
+
+            {departments.map(dept => (
+              <MenuItem key={dept.department_id}
+               value={dept.department_id}>
+                {dept.department_name}
               </MenuItem>
             ))}
           </Select>
+
+          {/* TEAM */}
+          <Select
+  fullWidth
+  sx={{ mb: 2 }}
+  name="team_id"
+  value={form.team_id || ""}
+  onChange={handleChange}
+  displayEmpty
+  disabled={!form.department_id}
+>
+  <MenuItem value="" disabled>
+    Select Team
+  </MenuItem>
+
+  {teams.map((t) => (
+    <MenuItem key={t.team_id} value={String(t.team_id)}>
+      {t.team_name}
+    </MenuItem>
+  ))}
+</Select>
+<Typography variant="caption">
+  Teams count: {teams.length}
+</Typography>
+
 
           <Button
             fullWidth
@@ -212,4 +306,5 @@ const AdminDashboard = () => {
   );
 };
 
-export default AdminDashboard;
+
+export default AdminDashboard ;

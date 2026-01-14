@@ -5,17 +5,26 @@ import {
   Button,
   Box,
   Typography,
-  Paper
+  Paper,
+  Alert
 } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import InputAdornment from "@mui/material/InputAdornment";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import axios from "axios";
 
 const Login = () => {
+
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async () => {
+    console.log("LOGIN BUTTON CLICKED");
   try {
     const res = await axios.post(
       "http://127.0.0.1:8000/api/v1/auth/login",
@@ -25,7 +34,14 @@ const Login = () => {
       }
     );
 
-    console.log(res.data);
+    console.log("AFTER API call");
+    console.log("RESPONSE:", res.data);
+    // SAVE JWT
+    localStorage.setItem("token", res.data.access_token);
+
+    // SAVE ROLE (FOR PROTECTED ROUTES)
+    localStorage.setItem("role", res.data.job_profile);
+
 
     // ---------- SAVE CONTEXT CORRECT ----------
     localStorage.setItem(
@@ -37,9 +53,11 @@ const Login = () => {
   })
 );
 
-
+   setSuccess("Login Successful.");
+   setError("");
     // ---------- ROLE BASED REDIRECT ----------
-    if (res.data.job_profile === "ADMIN") {
+    setTimeout(() => {
+      if (res.data.job_profile === "ADMIN") {
       navigate("/admin-dashboard");
 
     } else if (
@@ -52,12 +70,11 @@ const Login = () => {
       navigate("/project/");
     }
       
-    
-
-    alert("Login Successful ✔");
+}, 1500);
 
   } catch (err) {
     setError("Invalid email or password");
+    console.log(err);
   }
 };
 
@@ -95,18 +112,36 @@ const Login = () => {
 
         <TextField
           label="Password"
-          type="password"
+          type={showPassword ? "text" : "password"}
           fullWidth
           margin="normal"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-        />
+          InputProps={{
+            endAdornment: (
+               <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowPassword(!showPassword)}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+              </InputAdornment>
+    ),
+  }}
+/>
+
+        {success && (
+         <Alert severity="success" sx={{ mt: 2 }}>
+          {success}
+         </Alert>
+       )}
 
         {error && (
-          <Typography color="error" variant="body2">
-            {error}
-          </Typography>
-        )}
+         <Alert severity="error" sx={{ mt: 2 }}>
+          {error}
+         </Alert>
+      )}
 
         <Button
           variant="contained"

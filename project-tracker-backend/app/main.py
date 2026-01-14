@@ -15,7 +15,7 @@ from app.api.v1.routes.project_member_routes import router as project_member_rou
 from app.api.v1.routes.team_routes import router as team_router
 from app.api.v1.routes.team_project_routes import router as team_project_router
 from app.api.v1.routes.company_routes import router as company_router
-
+from app.api.v1.routes.test_routes import router as test_router
 app = FastAPI(title="Project Tracker API")
 
 #  create tables
@@ -46,4 +46,4 @@ app.include_router(project_member_router)
 app.include_router(team_router)
 app.include_router(team_project_router)
 app.include_router(company_router)
-
+app.include_router(test_router)

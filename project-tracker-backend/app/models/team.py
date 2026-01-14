@@ -1,6 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 from app.database.database import Base
+from app.models.department import Department
 
 class Team(Base):
     __tablename__ = "team"
