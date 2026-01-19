@@ -16,7 +16,11 @@ const Projects = () => {
   // logged-in user
   const user = JSON.parse(localStorage.getItem("user"));
 
-  const canAddProject = user?.job_profile === "PRODUCT MANAGER";
+  const canAddProject =
+  ["PRODUCT MANAGER", "PROJECT MANAGER"].includes(
+    user?.job_profile?.toUpperCase()
+  );
+
    
   //  fetch projects of team
   const fetchProjects = async () => {

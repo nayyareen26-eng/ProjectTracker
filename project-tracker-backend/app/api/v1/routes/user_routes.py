@@ -1,22 +1,34 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from typing import List
+from datetime import datetime, timedelta
+import uuid
+
 from app.database.database import get_db
 from app.models.user import User
 from app.schemas.user_schemas import UserCreate, UserResponse
-from typing import List
+from app.utils.email_utils import send_reset_password_email
 
 router = APIRouter(
     prefix="/api/v1/user",
     tags=["Users"]
 )
 
-#create user (Admin)
-@router.post("/", response_model=UserResponse)
-def create_user(user: UserCreate, db: Session = Depends(get_db)):
+# ---------------- CREATE USER (ADMIN) ----------------
+@router.post("/")
+async def create_user(
+    user: UserCreate,
+    db: Session = Depends(get_db)
+):
+    existing = db.query(User).filter(
+        User.email_id == user.email_id
+    ).first()
 
-    existing = db.query(User).filter(User.email_id == user.email_id).first()
     if existing:
-        raise HTTPException(status_code=400, detail="Email already exists")
+        raise HTTPException(
+            status_code=400,
+            detail="Email already exists"
+        )
 
     new_user = User(
         user_name=user.user_name,
@@ -30,10 +42,29 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_user)
 
-    return new_user
+    # 🔐 Generate reset token
+    token = str(uuid.uuid4())
 
-#get users for PM while creating a project
+    new_user.reset_token = token
+    new_user.reset_token_expiry = (
+        datetime.utcnow() + timedelta(minutes=15)
+    )
+
+    db.commit()
+
+    # 📧 Send password set email
+    await send_reset_password_email(
+        to_email=new_user.email_id,
+        first_name=new_user.user_name,
+        token=token
+    )
+
+    return {
+        "message": "User created & password set email sent"
+    }
+
+
+# ---------------- GET USERS ----------------
 @router.get("/", response_model=List[UserResponse])
 def get_users(db: Session = Depends(get_db)):
-    users = db.query(User).all()
-    return users
+    return db.query(User).all()

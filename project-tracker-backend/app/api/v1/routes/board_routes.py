@@ -90,3 +90,27 @@ def delete_board(
 def list_boards(db: Session = Depends(get_db)):
     return db.query(Board).all()
 
+#boards by project 
+@router.get("/project/{project_id}")
+def get_boards_by_project(
+    project_id: int,
+    db: Session = Depends(get_db)
+):
+    boards = (
+        db.query(Board)
+        .join(
+            BoardProjectMapping,
+            Board.board_id == BoardProjectMapping.board_id
+        )
+        .filter(
+            BoardProjectMapping.project_id == project_id
+        )
+        .all()
+    )
+
+    return {
+        "count": len(boards),
+        "boards": boards
+    }
+
+

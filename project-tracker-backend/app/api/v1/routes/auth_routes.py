@@ -87,7 +87,7 @@ async def forgot_password(
     db.commit()
 
     
-    reset_link = f"http://localhost:3000/set-password?token={token}"
+    
 
     await send_reset_password_email(
         to_email=user.email_id,
@@ -95,7 +95,7 @@ async def forgot_password(
         token=token 
     )
 
-    return {"message": "Password reset email sent"}
+    return {"If the account exists, a reset link has been sent"}
 
 #  RESET PASSWORD 
 @router.post("/reset-password")

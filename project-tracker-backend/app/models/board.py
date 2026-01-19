@@ -1,5 +1,7 @@
 from sqlalchemy import Column, Integer, String, DateTime
 from app.database.database import Base
+from sqlalchemy.orm import relationship
+
 
 class Board(Base):
     __tablename__ = "board"
@@ -9,3 +11,6 @@ class Board(Base):
     sprint_start_date = Column(DateTime)
     sprint_end_date = Column(DateTime)
     board_short_description = Column(String(50))
+
+#Relationships
+    tasks_mapping = relationship("BoardTaskMapping", back_populates="board", cascade="all, delete")

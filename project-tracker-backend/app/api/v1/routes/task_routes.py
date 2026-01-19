@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from app.database.database import get_db
 from app.models.task import Task
+from app.models.board_task_mapping import BoardTaskMapping
 from app.schemas.task_schemas import TaskCreate, TaskUpdate
 
 router = APIRouter(
@@ -101,5 +102,8 @@ def delete_task(
         "message": "Task deleted successfully",
         "task_id": task_id
     }
+
+
+
 
 

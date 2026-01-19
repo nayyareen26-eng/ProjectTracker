@@ -6,14 +6,15 @@ import {
   Box,
   Typography,
   Paper,
-  Alert
+  Alert,
+  Link
 } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import axios from "axios";
-
+import { Link as RouterLink } from "react-router-dom";
 const Login = () => {
 
   const navigate = useNavigate();
@@ -156,6 +157,13 @@ const Login = () => {
         >
           Login
         </Button>
+
+        <Typography align="right" variant="body2" sx={{ mt: 1 }}>
+  <Link component={RouterLink} to="/forgot-password">
+    Forgot Password?
+  </Link>
+</Typography>
+
       </Paper>
     </Box>
   );
