@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.database.database import engine, Base
 import app.models  #  REQUIRED – models register hote hain
@@ -16,6 +17,12 @@ from app.api.v1.routes.team_routes import router as team_router
 from app.api.v1.routes.team_project_routes import router as team_project_router
 from app.api.v1.routes.company_routes import router as company_router
 from app.api.v1.routes.test_routes import router as test_router
+from app.api.v1.routes.board_task_mapping_routes import router as board_task_mapping_router
+from app.api.v1.routes.attachment_routes import router as attachment_router
+from app.api.v1.routes.comment_routes import router as comment_router
+from app.api.v1.routes.notification_routes import router as notification_router
+
+
 app = FastAPI(title="Project Tracker API")
 
 #  create tables
@@ -24,11 +31,17 @@ Base.metadata.create_all(bind=engine)
 #CORS fix for frontend error
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 @app.get("/")
 def root():
@@ -47,3 +60,7 @@ app.include_router(team_router)
 app.include_router(team_project_router)
 app.include_router(company_router)
 app.include_router(test_router)
+app.include_router(board_task_mapping_router)
+app.include_router(attachment_router)
+app.include_router(comment_router)
+app.include_router(notification_router)

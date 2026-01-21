@@ -2,7 +2,6 @@ from datetime import datetime, timedelta
 from jose import jwt, JWTError
 from app.config import settings
 
-
 def create_access_token(
     data: dict,
     expires_delta: timedelta | None = None

@@ -7,4 +7,3 @@ print("Hashed:", hashed)
 
 is_valid = verify_password(password, hashed)
 print("Verified:", is_valid)  
-

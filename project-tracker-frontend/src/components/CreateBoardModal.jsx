@@ -1,3 +1,4 @@
+import api from "../services/api";
 import { useState } from "react";
 import {
   Dialog,
@@ -94,7 +95,7 @@ const CreateBoardModal = ({ open, onClose, projectId, onCreated }) => {
       <DialogActions>
         <Button onClick={onClose}>Cancel</Button>
         <Button variant="contained" onClick={handleCreate}>
-          Create Sprint
+          Create Sprint 
         </Button>
       </DialogActions>
     </Dialog>

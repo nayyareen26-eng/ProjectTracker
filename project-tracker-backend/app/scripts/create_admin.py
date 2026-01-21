@@ -5,8 +5,8 @@ from app.utils.password_utils import hash_password
 db = SessionLocal()
 
 admin = User(
-    user_name="Kaneez",
-    email_id="mansurikaneez22@gmail.com",
+    user_name="Nayyareen",                    
+    email_id="nayyareen.26@gmail.com",   
     password=hash_password("admin123"),
     job_profile="ADMIN",
     is_active=True

@@ -12,7 +12,7 @@ function DepartmentList() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    api.get("/api/department/")
+    api.get("/api/v1/department")
       .then((res) => {
         setDepartments(res.data);
       })

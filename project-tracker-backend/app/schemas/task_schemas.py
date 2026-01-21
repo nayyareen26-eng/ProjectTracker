@@ -36,4 +36,4 @@ class TaskUpdate(BaseModel):
 
     status: Optional[str] = None
     dependency: Optional[int] = None
-
+    

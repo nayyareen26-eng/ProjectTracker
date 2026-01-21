@@ -20,8 +20,7 @@ class Settings(BaseSettings):
     MAIL_PASSWORD: str
     MAIL_FROM: str
     MAIL_PORT: int
-    MAIL_SERVER: str 
-    
+    MAIL_SERVER: str  
 
     @property
     def DATABASE_URL(self) -> str:

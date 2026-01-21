@@ -1,3 +1,5 @@
+from app.utils.password_utils import hash_password
+hash_password("test")
 from sqlalchemy import Column, Integer, ForeignKey
 from app.database.database import Base
 
