@@ -41,8 +41,7 @@ const Login = () => {
     localStorage.setItem("token", res.data.access_token);
 
     // SAVE ROLE (FOR PROTECTED ROUTES)
-    localStorage.setItem("role", res.data.job_profile);
-
+    localStorage.setItem("job_profile", res.data.job_profile);
 
     // ---------- SAVE CONTEXT CORRECT ----------
     localStorage.setItem(
